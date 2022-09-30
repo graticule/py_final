@@ -2,7 +2,7 @@ from pprint import pprint
 import requests
 import urllib.parse as urp
 import datetime
-import progressbar
+from tqdm import tqdm
 
 
 class VK:
@@ -67,7 +67,8 @@ class PhotoBackuper:
         folder_name = str(datetime.datetime.now()).replace(':', '-')
         ya.create_folder(urp.quote(f'/{folder_name}'))
         files_uploaded_count = 0
-        with progressbar.ProgressBar(max_value=count) as bar:
+        #with progressbar.ProgressBar(max_value=count) as bar:
+        with tqdm(total=count) as bar:
             for photo in photos_info:
                 file_name = f'''{photo['likes']}.{photo['ext']}'''
                 addition = 0
