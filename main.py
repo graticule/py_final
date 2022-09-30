@@ -2,11 +2,10 @@ from pprint import pprint
 import requests
 import urllib.parse as urp
 import datetime
-from progress.bar import Bar
+import progressbar
 
 
 class VK:
-
     def __init__(self, access_token, version='5.131'):
         self.params = {'access_token': access_token, 'v': version}
 
@@ -65,9 +64,10 @@ class PhotoBackuper:
                                 'ext': photo['sizes'][-1]['url'].partition('?')[0].split('.')[-1],
                                 'size': photo['sizes'][-1]['type']})
         result = []
-        folder_name = str(datetime.datetime.now()).replace(':','-')
+        folder_name = str(datetime.datetime.now()).replace(':', '-')
         ya.create_folder(urp.quote(f'/{folder_name}'))
-        with Bar('Processing', max=count) as bar:
+        files_uploaded_count = 0
+        with progressbar.ProgressBar(max_value=count) as bar:
             for photo in photos_info:
                 file_name = f'''{photo['likes']}.{photo['ext']}'''
                 addition = 0
@@ -80,16 +80,17 @@ class PhotoBackuper:
                 if 200 < response.status_code < 300:
                     result.append({'file_name': file_name,
                                    'size': photo['size']})
-                    bar.next()
+                    files_uploaded_count += 1
+                    bar.update(files_uploaded_count)
                 if len(result) == count:
                     break
         return result
 
 
 if __name__ == '__main__':
-    vk_access_token = ''
-    yandex_token = input('Введите ваш токен для доступа к Яндекс.Диску: ')
-    vk_user_id = input('Введите ваш id в VK: ')
-    backuper = PhotoBackuper(vk_access_token)
-    result = backuper.backup(vk_user_id=vk_user_id, yandex_token=yandex_token)
-    pprint(result)
+    with open('vk_token.txt') as f:
+        vk_token = f.read()
+    with open('ya_token.txt') as f:
+        ya_token = f.read()
+    backuper = PhotoBackuper(vk_token)
+    pprint(backuper.backup(vk_user_id='1', yandex_token=ya_token))
