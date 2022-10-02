@@ -3,6 +3,8 @@ import requests
 import urllib.parse as urp
 import datetime
 from tqdm import tqdm
+import os
+from dotenv import load_dotenv
 
 
 class VK:
@@ -89,9 +91,8 @@ class PhotoBackuper:
 
 
 if __name__ == '__main__':
-    with open('vk_token.txt') as f:
-        vk_token = f.read()
-    with open('ya_token.txt') as f:
-        ya_token = f.read()
-    backuper = PhotoBackuper(vk_token)
-    pprint(backuper.backup(vk_user_id='1', yandex_token=ya_token))
+    load_dotenv()
+    access_token_vk = os.getenv('ACCESS_TOKEN_VK')
+    backuper = PhotoBackuper(access_token_vk)
+    token_ya = os.getenv('TOKEN_YA')
+    pprint(backuper.backup(vk_user_id='1', yandex_token=token_ya))
