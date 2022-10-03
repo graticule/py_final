@@ -66,10 +66,9 @@ class PhotoBackuper:
                                 'ext': photo['sizes'][-1]['url'].partition('?')[0].split('.')[-1],
                                 'size': photo['sizes'][-1]['type']})
         result = []
-        folder_name = str(datetime.datetime.now()).replace(':', '-')
+        folder_name = datetime.datetime.now().strftime('%Y-%m-%d__%H-%M-%S')
         ya.create_folder(urp.quote(f'/{folder_name}'))
         files_uploaded_count = 0
-        #with progressbar.ProgressBar(max_value=count) as bar:
         with tqdm(total=count) as bar:
             for photo in photos_info:
                 file_name = f'''{photo['likes']}.{photo['ext']}'''
